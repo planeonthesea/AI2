@@ -39,6 +39,17 @@ public class AkariPuzzle {
 		this.gameBoard[row][col] = character;
 	}
 
+	public void printBoard() {
+		System.out.println("=============================");
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.cols; j++) {
+				System.out.print(this.gameBoard[i][j]);
+			}
+			System.out.println();
+		}
+		System.out.println("=============================");
+	}
+
 	// For random choice heuristic
 	public Coordinate getRandomCell() {
 		int randRow, randCol;

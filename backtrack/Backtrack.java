@@ -25,6 +25,7 @@ public class Backtrack {
     private static void processInput(BufferedReader reader) {
         AkariPuzzle puzz = null;
         String line;
+        int currRow = 0;
 
         try {
 
@@ -38,6 +39,7 @@ public class Backtrack {
                         solve(puzz);
                     }
                     puzz = null;
+                    currRow = 0;
                 } else if (tokens.length == 2) {
                     // rows + cols definition
                     // Instantiate new puzzle
@@ -45,7 +47,8 @@ public class Backtrack {
                     int col = Integer.parseInt(tokens[1]);
                     puzz = new AkariPuzzle(row, col);
                 } else {
-                    addPuzzleRow(puzz, line);
+                    addPuzzleRow(puzz, line, currRow);
+                    currRow += 1;
                 }
             }
 
@@ -54,12 +57,21 @@ public class Backtrack {
         }
     }
 
-    private static void addPuzzleRow(AkariPuzzle puzz, String row) {
-        System.out.println("Add row:");
-        System.out.println(row);
+    private static void addPuzzleRow(AkariPuzzle puzz, String line, int row) {
+
+        // Iterate over string and add to row in puzzle char by char
+        int col = 0;
+        for (char ch : line.toCharArray()) {
+            if (ch == '_' || Character.isDigit(ch)) { // ignore trailing whitespace, etc.
+                puzz.setGameBoardCell(row, col, ch);
+            }
+            col += 1;
+        }
     }
 
     private static void solve(AkariPuzzle puzz) {
         System.out.println("Solving Puzzle...");
+
+        puzz.printBoard();
     }
 }
