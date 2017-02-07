@@ -91,6 +91,30 @@ public class Backtrack {
     private static void solve(AkariPuzzle puzz) {
         System.out.println("Solving Puzzle with '" + HEURITIC_NAMES[HEURISTIC] + "' heuristic...");
 
+        switch (HEURISTIC) {
+            case RANDOM_NODE_HEURISTIC:
+                solveWithRandom(puzz);
+                break;
+            case MOST_CONTRAINED_HEURISTIC:
+                solveWithMostConstrained(puzz);
+                break;
+            case MOST_CONSTRAINING_HEURISTIC:
+                solveWithMostConstraining(puzz);
+                break;
+        }
+
         puzz.printBoard();
+    }
+
+    private static void solveWithRandom(AkariPuzzle puzz) {
+        
+    }
+
+    private static void solveWithMostConstrained(AkariPuzzle puzz) {
+
+    }
+
+    private static void solveWithMostConstraining(AkariPuzzle puzz) {
+        
     }
 }

@@ -1,4 +1,5 @@
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
 
 public class AkariPuzzle {
 	private int rows;
@@ -50,20 +51,33 @@ public class AkariPuzzle {
 		System.out.println("=============================");
 	}
 
-	// For random choice heuristic
-	public Coordinate getRandomCell() {
-		int randRow, randCol;
-		char cell = '#';
+	public ArrayList<Coordinate> getShuffledCoordArray() {
+		// Gets all available coordinates on the board in a shuffled array
+		// Used for "Random Node Selection" heuristic
+		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
 
-		randRow = randCol = -1;
-		while (cell != '_') {
-			// Generate random indeces
-			randRow = ThreadLocalRandom.current().nextInt(0, rows + 1);
-			randCol = ThreadLocalRandom.current().nextInt(0, cols + 1);
-
-			cell = gameBoard[randRow][randCol];
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.cols; j++) {
+				// Populate ArrayList
+			}
 		}
 
-		return new Coordinate(randRow, randCol);
+		return coords;
+	}
+
+	public void fillColUp() {
+		// TODO
+	}
+
+	public void fillColDown() {
+		// TODO
+	}
+
+	public void fillRowLeft() {
+		// TODO
+	}
+
+	public void fillRowRight() {
+		// TODO
 	}
 }
