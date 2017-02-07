@@ -101,7 +101,7 @@ public class AkariPuzzle {
 		Boolean placeBulb = true;
 
 		if (upperNeighbour.x >= 0) { // Make sure not out of bounds
-			if (Character.isDigit(gameBoard[upperNeighbour.x][upperNeighbour.y]) && Character.getNumericValue(gameBoard[upperNeighbour.x][upperNeighbour.y]) > 0) {
+			if (Character.isDigit(gameBoard[upperNeighbour.x][upperNeighbour.y])) {
 				int surrBulbs = countSurroundingBulbs(upperNeighbour);
 				if (surrBulbs >= Character.getNumericValue(gameBoard[upperNeighbour.x][upperNeighbour.y])) {
 					placeBulb = false;
@@ -113,21 +113,48 @@ public class AkariPuzzle {
 	}
 
 	private Boolean checkLowerNeighbour(Coordinate cell) {
-		// TODO
+		Coordinate lowerNeighbour = new Coordinate(cell.x + 1, cell.y);
+		Boolean placeBulb = true;
 
-		return true;
+		if (lowerNeighbour.x < this.rows) { // Make sure not out of bounds
+			if (Character.isDigit(gameBoard[lowerNeighbour.x][lowerNeighbour.y])) {
+				int surrBulbs = countSurroundingBulbs(lowerNeighbour);
+				if (surrBulbs >= Character.getNumericValue(gameBoard[lowerNeighbour.x][lowerNeighbour.y])) {
+					placeBulb = false;
+				}
+			} 
+		}
+		return placeBulb;
 	}
 
 	private Boolean checkLeftNeighbour(Coordinate cell) {
-		// TODO
+		Coordinate leftNeighbour = new Coordinate(cell.x, cell.y - 1);
+		Boolean placeBulb = true;
 
-		return true;
+		if (leftNeighbour.y >= 0) { // Make sure not out of bounds
+			if (Character.isDigit(gameBoard[leftNeighbour.x][leftNeighbour.y])) {
+				int surrBulbs = countSurroundingBulbs(leftNeighbour);
+				if (surrBulbs >= Character.getNumericValue(gameBoard[leftNeighbour.x][leftNeighbour.y])) {
+					placeBulb = false;
+				}
+			} 
+		}
+		return placeBulb;
 	}
 
 	private Boolean checkRightNeighbour(Coordinate cell) {
-		// TODO
+		Coordinate rightNeighbour = new Coordinate(cell.x, cell.y + 1);
+		Boolean placeBulb = true;
 
-		return true;
+		if (rightNeighbour.y < this.cols) { // Make sure not out of bounds
+			if (Character.isDigit(gameBoard[rightNeighbour.x][rightNeighbour.y])) {
+				int surrBulbs = countSurroundingBulbs(rightNeighbour);
+				if (surrBulbs >= Character.getNumericValue(gameBoard[rightNeighbour.x][rightNeighbour.y])) {
+					placeBulb = false;
+				}
+			} 
+		}
+		return placeBulb;
 	}
 
 	private int countSurroundingBulbs(Coordinate cell) {

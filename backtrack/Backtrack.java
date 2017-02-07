@@ -110,8 +110,9 @@ public class Backtrack {
     private static void solveWithRandom(AkariPuzzle puzz) {
         ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
 
-        System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
-        System.out.println(puzz.checkNeighbours(shuffledCoords.get(0)));
+        // System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
+        System.out.println("Checking neighbours of: " + new Coordinate(2, 5).toString());
+        System.out.println(puzz.checkNeighbours(new Coordinate(2, 5)));
     }
 
     private static void solveWithMostConstrained(AkariPuzzle puzz) {
