@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.ArrayList;
 
 public class Backtrack {
     private static final int RANDOM_NODE_HEURISTIC = 0;
@@ -107,8 +108,10 @@ public class Backtrack {
     }
 
     private static void solveWithRandom(AkariPuzzle puzz) {
-        System.out.println(puzz.getCoordList());
-        System.out.println(puzz.getShuffledCoordList());
+        ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
+
+        System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
+        System.out.println(puzz.checkNeighbours(shuffledCoords.get(0)));
     }
 
     private static void solveWithMostConstrained(AkariPuzzle puzz) {

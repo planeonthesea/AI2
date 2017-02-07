@@ -78,19 +78,101 @@ public class AkariPuzzle {
 		return coords;
 	}
 
-	public void fillColUp() {
+	public Boolean checkNeighbours(Coordinate cell) {
+		// Checks neighbours and returns a boolean to indicate whether or not a bulb
+		// can be placed
+		Boolean placeBulb = true;
+
+		if (!checkUpperNeighbour(cell) ||
+			!checkLowerNeighbour(cell) ||
+			!checkLeftNeighbour(cell) ||
+			!checkRightNeighbour(cell)) {
+			placeBulb = false;
+		} else if (Character.isDigit(gameBoard[cell.x][cell.y])) {
+			placeBulb = false;
+		}
+
+		return placeBulb;
+
+	}
+
+	private Boolean checkUpperNeighbour(Coordinate cell) {
+		Coordinate upperNeighbour = new Coordinate(cell.x - 1, cell.y);
+		Boolean placeBulb = true;
+
+		if (upperNeighbour.x >= 0) { // Make sure not out of bounds
+			if (Character.isDigit(gameBoard[upperNeighbour.x][upperNeighbour.y]) && Character.getNumericValue(gameBoard[upperNeighbour.x][upperNeighbour.y]) > 0) {
+				int surrBulbs = countSurroundingBulbs(upperNeighbour);
+				if (surrBulbs >= Character.getNumericValue(gameBoard[upperNeighbour.x][upperNeighbour.y])) {
+					placeBulb = false;
+				}
+			} 
+		}
+
+		return placeBulb;
+	}
+
+	private Boolean checkLowerNeighbour(Coordinate cell) {
+		// TODO
+
+		return true;
+	}
+
+	private Boolean checkLeftNeighbour(Coordinate cell) {
+		// TODO
+
+		return true;
+	}
+
+	private Boolean checkRightNeighbour(Coordinate cell) {
+		// TODO
+
+		return true;
+	}
+
+	private int countSurroundingBulbs(Coordinate cell) {
+		int bulbCount = 0;
+
+		if (cell.x > 0) {
+			if (gameBoard[cell.x - 1][cell.y] == 'b') {
+				bulbCount += 1;
+			}
+		}
+
+		if (cell.y > 0) {
+			if (gameBoard[cell.x][cell.y - 1] == 'b') {
+				bulbCount += 1;
+			}
+		}
+
+		if (cell.x < this.rows - 1) {
+			if (gameBoard[cell.x + 1][cell.y] == 'b') {
+				bulbCount += 1;
+			}
+		}
+
+		if (cell.y < this.cols - 1) {
+			if (gameBoard[cell.x][cell.y + 1] == 'b') {
+				bulbCount += 1;
+			}
+		}
+
+		return bulbCount;
+	}
+
+	private void fillColUp() {
 		// TODO
 	}
 
-	public void fillColDown() {
+	private void fillColDown() {
 		// TODO
 	}
 
-	public void fillRowLeft() {
+	private void fillRowLeft() {
 		// TODO
 	}
 
-	public void fillRowRight() {
+	private void fillRowRight() {
 		// TODO
 	}
 }
