@@ -1,5 +1,7 @@
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 public class AkariPuzzle {
 	private int rows;
@@ -51,16 +53,27 @@ public class AkariPuzzle {
 		System.out.println("=============================");
 	}
 
-	public ArrayList<Coordinate> getShuffledCoordArray() {
+	public ArrayList<Coordinate> getCoordList() {
 		// Gets all available coordinates on the board in a shuffled array
 		// Used for "Random Node Selection" heuristic
 		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
 
 		for (int i = 0; i < this.rows; i++) {
 			for (int j = 0; j < this.cols; j++) {
-				// Populate ArrayList
+				// Populate ArrayList with empty cells (i.e., cells with no wall)
+				if (!Character.isDigit(gameBoard[i][j])) {
+					coords.add(new Coordinate(i, j));
+				}
 			}
 		}
+
+		return coords;
+	}
+
+	public ArrayList<Coordinate> getShuffledCoordList() {
+		ArrayList<Coordinate> coords = getCoordList();
+		long seed = System.nanoTime();
+		Collections.shuffle(coords, new Random(seed));
 
 		return coords;
 	}

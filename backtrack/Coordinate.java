@@ -7,7 +7,7 @@ public class Coordinate {
     }
 
     public String toString() {
-        return "Row: " + this.x + "; Col: " + this.y;
+        return "[" + this.x + ", " + this.y + "]";
     }
 
     public Boolean equals(Coordinate coord) {

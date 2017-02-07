@@ -107,7 +107,8 @@ public class Backtrack {
     }
 
     private static void solveWithRandom(AkariPuzzle puzz) {
-        
+        System.out.println(puzz.getCoordList());
+        System.out.println(puzz.getShuffledCoordList());
     }
 
     private static void solveWithMostConstrained(AkariPuzzle puzz) {
