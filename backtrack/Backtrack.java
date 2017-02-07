@@ -2,10 +2,29 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 
 public class Backtrack {
+    private static final int RANDOM_NODE_HEURISTIC = 0;
+    private static final int MOST_CONTRAINED_HEURISTIC = 1;
+    private static final int MOST_CONSTRAINING_HEURISTIC = 2;
+    private static final String[] HEURITIC_NAMES = {"Random Node", "Most Contrained", "Most Constraining"};
+
+    private static int HEURISTIC = RANDOM_NODE_HEURISTIC; // Default to random if user chooses none
+
     public static void main(String[] args) {
+        if (args.length >= 2) {
+            switch (args[1]) {
+                case "--random":
+                    HEURISTIC = RANDOM_NODE_HEURISTIC;
+                    break;
+                case "--most-constrained":
+                    HEURISTIC = MOST_CONTRAINED_HEURISTIC;
+                    break;
+                case "--most-constraining":
+                    HEURISTIC = MOST_CONSTRAINING_HEURISTIC;
+                    break;
+            }
+        }
+
         processInput(getFileBuffer(args[0]));
-
-
     }
 
     private static BufferedReader getFileBuffer(String path) {
@@ -16,7 +35,7 @@ public class Backtrack {
         try {
             reader = new BufferedReader(new FileReader(path));
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
 
         return reader;
@@ -52,8 +71,8 @@ public class Backtrack {
                 }
             }
 
-        } catch (Exception ioe) {
-            System.out.println(ioe);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -70,7 +89,7 @@ public class Backtrack {
     }
 
     private static void solve(AkariPuzzle puzz) {
-        System.out.println("Solving Puzzle...");
+        System.out.println("Solving Puzzle with '" + HEURITIC_NAMES[HEURISTIC] + "' heuristic...");
 
         puzz.printBoard();
     }
