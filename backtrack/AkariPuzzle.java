@@ -1,3 +1,5 @@
+import java.util.concurrent.ThreadLocalRandom;
+
 public class AkariPuzzle {
 	private int rows;
 	private int cols;
@@ -23,5 +25,34 @@ public class AkariPuzzle {
 
 	public int getCols() {
 		return this.cols;
+	}
+
+	public char[][] getGameBoard() {
+		return this.gameBoard;
+	}
+
+	public void setGameBoard(char[][] board) {
+		this.gameBoard = board;
+	}
+
+	public void setGameBoardCell(int row, int col, char character) {
+		this.gameBoard[row][col] = character;
+	}
+
+	// For random choice heuristic
+	public Coordinate getRandomCell() {
+		int randRow, randCol;
+		char cell = '#';
+
+		randRow = randCol = -1;
+		while (cell != '_') {
+			// Generate random indeces
+			randRow = ThreadLocalRandom.current().nextInt(0, rows + 1);
+			randCol = ThreadLocalRandom.current().nextInt(0, cols + 1);
+
+			cell = gameBoard[randRow][randCol];
+		}
+
+		return new Coordinate(randRow, randCol);
 	}
 }
