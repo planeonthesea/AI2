@@ -1,9 +1,10 @@
 public class Coordinate { 
+    // A little counter-intuitive, but x represents row and y represents column
     public final int x; 
     public final int y; 
-    public Coordinate(int x, int y) { 
-        this.x = x; 
-        this.y = y; 
+    public Coordinate(int row, int col) { 
+        this.x = row; 
+        this.y = col; 
     }
 
     public String toString() {

@@ -2,6 +2,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import java.util.Arrays;
 
 public class AkariPuzzle {
 	private int rows;
@@ -187,19 +188,82 @@ public class AkariPuzzle {
 		return bulbCount;
 	}
 
-	private void fillColUp() {
-		// TODO
+	public Boolean fillLights(Coordinate initCell) {
+		Boolean fillSuccess = true;
+		char[][] gameBoardCopy = deepCopyGameBoard();
+
+		if (!fillColUp(initCell)) {
+			fillSuccess = false;
+		}
+		if (!fillColDown(initCell)) {
+			fillSuccess = false;
+		}
+		if (!fillRowLeft(initCell)) {
+			fillSuccess = false;
+		}
+		if (!fillRowRight(initCell)) {
+			fillSuccess = false;
+		}
+
+		if (fillSuccess) {
+			this.gameBoard[initCell.x][initCell.y] = 'b';
+		}
+
+		return fillSuccess;
 	}
 
-	private void fillColDown() {
-		// TODO
+	private Boolean fillColUp(Coordinate initCell) {
+		// Fills cells with '*' to represent light in the upwards direction
+
+		// Returns true if no constraints violated
+		// Returns false if constraint violated
+		final int OFFSET = 1;
+
+		Boolean keepGoing = true;
+		Boolean constraintViolated = false;
+		Coordinate currCell = new Coordinate(initCell.x - OFFSET, initCell.y);
+
+		while (keepGoing) {
+			if (currCell.x >= 0) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+					this.gameBoard[currCell.x][currCell.y] = '*';
+					currCell = new Coordinate(currCell.x - OFFSET, currCell.y); // Move curr Cell up by one
+				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
+					keepGoing = false;
+				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
+					constraintViolated = true;
+				}
+			}
+		}
+
+		return !constraintViolated;
 	}
 
-	private void fillRowLeft() {
+	private Boolean fillColDown(Coordinate initCell) {
 		// TODO
+		return true;
 	}
 
-	private void fillRowRight() {
+	private Boolean fillRowLeft(Coordinate initCell) {
 		// TODO
+		return true;
+	}
+
+	private Boolean fillRowRight(Coordinate initCell) {
+		// TODO
+		return true;
+	}
+
+	private char[][] deepCopyGameBoard() {
+		if (this.gameBoard == null) {
+			return null;
+		}
+
+		final char[][] result = new char[this.gameBoard.length][];
+		for (int i = 0; i < this.gameBoard.length; i++) {
+			result[i] = Arrays.copyOf(this.gameBoard[i], this.gameBoard[i].length);
+		}
+
+		return result;
 	}
 }

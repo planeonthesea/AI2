@@ -92,6 +92,7 @@ public class Backtrack {
     private static void solve(AkariPuzzle puzz) {
         System.out.println("Solving Puzzle with '" + HEURITIC_NAMES[HEURISTIC] + "' heuristic...");
 
+        puzz.printBoard();
         switch (HEURISTIC) {
             case RANDOM_NODE_HEURISTIC:
                 solveWithRandom(puzz);
@@ -103,8 +104,8 @@ public class Backtrack {
                 solveWithMostConstraining(puzz);
                 break;
         }
-
         puzz.printBoard();
+
     }
 
     private static void solveWithRandom(AkariPuzzle puzz) {
@@ -113,6 +114,10 @@ public class Backtrack {
         // System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
         System.out.println("Checking neighbours of: " + new Coordinate(2, 5).toString());
         System.out.println(puzz.checkNeighbours(new Coordinate(2, 5)));
+
+        if (puzz.checkNeighbours(new Coordinate(2, 3))) {
+            puzz.fillLights(new Coordinate(2, 3));
+        }
     }
 
     private static void solveWithMostConstrained(AkariPuzzle puzz) {
