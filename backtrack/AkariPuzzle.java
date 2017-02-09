@@ -233,25 +233,97 @@ public class AkariPuzzle {
 				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
 					constraintViolated = true;
 				}
+			} else {
+				keepGoing = false;
 			}
 		}
+		return !constraintViolated;
+	}
 
+	private Boolean fillRowRight(Coordinate initCell) {
+		// Fills cells with '*' to represent light in the upwards direction
+
+		// Returns true if no constraints violated
+		// Returns false if constraint violated
+		final int OFFSET = 1;
+
+		Boolean keepGoing = true;
+		Boolean constraintViolated = false;
+		Coordinate currCell = new Coordinate(initCell.x, initCell.y - OFFSET);
+
+		while (keepGoing) {
+			System.out.println(currCell.y);
+
+			if (currCell.y >= 0) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+					this.gameBoard[currCell.x][currCell.y] = '*';
+					currCell = new Coordinate(currCell.x, currCell.y - OFFSET); // Move curr Cell up by one
+				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
+					keepGoing = false;
+				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
+					constraintViolated = true;
+				}
+			} else {
+				keepGoing = false;
+			}
+		}
+		return !constraintViolated;
+	}
+
+	private Boolean fillRowLeft(Coordinate initCell) {
+		// Fills cells with '*' to represent light in the upwards direction
+
+		// Returns true if no constraints violated
+		// Returns false if constraint violated
+		final int OFFSET = 1;
+
+		Boolean keepGoing = true;
+		Boolean constraintViolated = false;
+		Coordinate currCell = new Coordinate(initCell.x, initCell.y + OFFSET);
+
+		while (keepGoing) {
+			if (currCell.y < rows) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+					this.gameBoard[currCell.x][currCell.y] = '*';
+					currCell = new Coordinate(currCell.x, currCell.y + OFFSET); // Move curr Cell up by one
+				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
+					keepGoing = false;
+				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
+					constraintViolated = true;
+				}
+			} else {
+				keepGoing = false;
+			}
+		}
 		return !constraintViolated;
 	}
 
 	private Boolean fillColDown(Coordinate initCell) {
-		// TODO
-		return true;
-	}
+		// Fills cells with '*' to represent light in the upwards direction
 
-	private Boolean fillRowLeft(Coordinate initCell) {
-		// TODO
-		return true;
-	}
+		// Returns true if no constraints violated
+		// Returns false if constraint violated
+		final int OFFSET = 1;
 
-	private Boolean fillRowRight(Coordinate initCell) {
-		// TODO
-		return true;
+		Boolean keepGoing = true;
+		Boolean constraintViolated = false;
+		Coordinate currCell = new Coordinate(initCell.x + OFFSET, initCell.y);
+
+		while (keepGoing) {
+			if (currCell.x < cols) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+					this.gameBoard[currCell.x][currCell.y] = '*';
+					currCell = new Coordinate(currCell.x + OFFSET, currCell.y); // Move curr Cell up by one
+				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
+					keepGoing = false;
+				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
+					constraintViolated = true;
+				}
+			} else {
+				keepGoing = false;
+			}
+		}
+		return !constraintViolated;
 	}
 
 	private char[][] deepCopyGameBoard() {

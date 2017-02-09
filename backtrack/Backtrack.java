@@ -22,7 +22,7 @@ public class Backtrack {
                 case "--most-constraining":
                     HEURISTIC = MOST_CONSTRAINING_HEURISTIC;
                     break;
-            }
+            } 
         }
 
         processInput(getFileBuffer(args[0]));
@@ -114,9 +114,10 @@ public class Backtrack {
         // System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
         System.out.println("Checking neighbours of: " + new Coordinate(2, 5).toString());
         System.out.println(puzz.checkNeighbours(new Coordinate(2, 5)));
-
+        
         if (puzz.checkNeighbours(new Coordinate(2, 3))) {
             puzz.fillLights(new Coordinate(2, 3));
+            //puzz.fillLights(new Coordinate(2, 2));
         }
     }
 
