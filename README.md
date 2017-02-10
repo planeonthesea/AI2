@@ -4,4 +4,4 @@ _Note: Java 8 Required_
 - To compile:
 	+ `cd` into `backtrack/` and run `javac *.java`
 - To run:
-	+ `java Backtrack <path/to/input/file>`
+	+ `java Backtrack <path/to/input/file> --<random/most-constrained/most-constraining>`
