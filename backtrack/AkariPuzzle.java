@@ -206,7 +206,7 @@ public class AkariPuzzle {
 			fillSuccess = false;
 		}
 
-		if (fillSuccess) {
+		if (fillSuccess && checkNeighbours(initCell)) {
 			this.gameBoard[initCell.x][initCell.y] = 'b';
 			placedBulbs.add(initCell);
 		} else {
