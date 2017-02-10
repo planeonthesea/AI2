@@ -110,15 +110,37 @@ public class Backtrack {
 
     private static void solveWithRandom(AkariPuzzle puzz) {
         ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
-
+        char[][] board = puzz.getGameBoard();
         // System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
         Coordinate coord = new Coordinate(2, 3);
         System.out.println("Checking neighbours of: " + coord.toString());
-        
-        if (puzz.checkNeighbours(coord)) {
+        ArrayList<Coordinate> openSpaces = new ArrayList<Coordinate>();
+        /*if (puzz.checkNeighbours(coord)) {
             puzz.placeBulbIfPossible(coord);
             puzz.placeBulbIfPossible(new Coordinate(2, 5));
+        }*/
+        for(int i = 0; i < puzz.getRows(); i++) {
+            for(int k = 0; k < puzz.getCols(); k++) {
+            	if(!Character.isDigit(board[i][k])) {
+            		openSpaces.add(new Coordinate(i, k));
+            	}
+            }
         }
+        recursiveRandom(openSpaces, puzz);
+
+    }
+    private static void recursiveRandom(ArrayList<Coordinate> openSpaces, AkariPuzzle puzz) {
+    	ArrayList<Coordinate> openSpacesCopy = new ArrayList<Coordinate>();
+    	int pick = 0;
+    	for(Coordinate c : openSpaces) {
+    		openSpacesCopy.add(new Coordinate(c.x, c.y));
+    	}
+    	Coordinate checkCoord = openSpacesCopy.get(pick);
+    	if (puzz.checkNeighbours(checkCoord)) {
+            puzz.placeBulbIfPossible(checkCoord);
+    	} else {
+    		System.out.println("fail");
+    	}
     }
 
     private static void solveWithMostConstrained(AkariPuzzle puzz) {
