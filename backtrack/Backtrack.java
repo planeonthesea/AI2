@@ -112,12 +112,12 @@ public class Backtrack {
         ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
 
         // System.out.println("Checking neighbours of: " + shuffledCoords.get(0).toString());
-        System.out.println("Checking neighbours of: " + new Coordinate(2, 5).toString());
-        System.out.println(puzz.checkNeighbours(new Coordinate(2, 5)));
+        Coordinate coord = new Coordinate(2, 3);
+        System.out.println("Checking neighbours of: " + coord.toString());
         
-        if (puzz.checkNeighbours(new Coordinate(2, 3))) {
-            puzz.fillLights(new Coordinate(2, 3));
-            //puzz.fillLights(new Coordinate(2, 2));
+        if (puzz.checkNeighbours(coord)) {
+            puzz.placeBulbIfPossible(coord);
+            puzz.placeBulbIfPossible(new Coordinate(2, 5));
         }
     }
 

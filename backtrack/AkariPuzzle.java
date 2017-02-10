@@ -8,6 +8,7 @@ public class AkariPuzzle {
 	private int rows;
 	private int cols;
 	private char[][] gameBoard;
+	private ArrayList<Coordinate> placedBulbs = new ArrayList<Coordinate>();
 
 	public AkariPuzzle(int rows, int cols) {
 		this.rows = rows;
@@ -188,7 +189,7 @@ public class AkariPuzzle {
 		return bulbCount;
 	}
 
-	public Boolean fillLights(Coordinate initCell) {
+	public Boolean placeBulbIfPossible(Coordinate initCell) {
 		Boolean fillSuccess = true;
 		char[][] gameBoardCopy = deepCopyGameBoard();
 
@@ -207,6 +208,9 @@ public class AkariPuzzle {
 
 		if (fillSuccess) {
 			this.gameBoard[initCell.x][initCell.y] = 'b';
+			placedBulbs.add(initCell);
+		} else {
+			this.gameBoard = gameBoardCopy;
 		}
 
 		return fillSuccess;
@@ -225,13 +229,14 @@ public class AkariPuzzle {
 
 		while (keepGoing) {
 			if (currCell.x >= 0) {
-				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = '*';
 					currCell = new Coordinate(currCell.x - OFFSET, currCell.y); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
 				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
 					constraintViolated = true;
+					keepGoing = false;
 				}
 			} else {
 				keepGoing = false;
@@ -249,19 +254,19 @@ public class AkariPuzzle {
 
 		Boolean keepGoing = true;
 		Boolean constraintViolated = false;
-		Coordinate currCell = new Coordinate(initCell.x, initCell.y - OFFSET);
+		Coordinate currCell = new Coordinate(initCell.x, initCell.y + OFFSET);
 
 		while (keepGoing) {
-			System.out.println(currCell.y);
 
-			if (currCell.y >= 0) {
-				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+			if (currCell.y < this.cols) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = '*';
-					currCell = new Coordinate(currCell.x, currCell.y - OFFSET); // Move curr Cell up by one
+					currCell = new Coordinate(currCell.x, currCell.y + OFFSET); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
 				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
 					constraintViolated = true;
+					keepGoing = false;
 				}
 			} else {
 				keepGoing = false;
@@ -279,17 +284,18 @@ public class AkariPuzzle {
 
 		Boolean keepGoing = true;
 		Boolean constraintViolated = false;
-		Coordinate currCell = new Coordinate(initCell.x, initCell.y + OFFSET);
+		Coordinate currCell = new Coordinate(initCell.x, initCell.y - OFFSET);
 
 		while (keepGoing) {
-			if (currCell.y < rows) {
-				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+			if (currCell.y >= 0) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = '*';
-					currCell = new Coordinate(currCell.x, currCell.y + OFFSET); // Move curr Cell up by one
+					currCell = new Coordinate(currCell.x, currCell.y - OFFSET); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
 				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
 					constraintViolated = true;
+					keepGoing = false;
 				}
 			} else {
 				keepGoing = false;
@@ -310,14 +316,15 @@ public class AkariPuzzle {
 		Coordinate currCell = new Coordinate(initCell.x + OFFSET, initCell.y);
 
 		while (keepGoing) {
-			if (currCell.x < cols) {
-				if (this.gameBoard[currCell.x][currCell.y] == '_') {
+			if (currCell.x < this.cols) {
+				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = '*';
 					currCell = new Coordinate(currCell.x + OFFSET, currCell.y); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
 				} else if (this.gameBoard[currCell.x][currCell.y] == 'b') {
 					constraintViolated = true;
+					keepGoing = false;
 				}
 			} else {
 				keepGoing = false;
