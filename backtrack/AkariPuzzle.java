@@ -333,7 +333,7 @@ public class AkariPuzzle {
 		return !constraintViolated;
 	}
 
-	private char[][] deepCopyGameBoard() {
+	public char[][] deepCopyGameBoard() {
 		if (this.gameBoard == null) {
 			return null;
 		}
@@ -344,5 +344,47 @@ public class AkariPuzzle {
 		}
 
 		return result;
+	}
+	public Boolean isSolved() {
+		boolean solved = true;
+		// TODO implement method to check if puzzle is solved
+		// If it is, great. If not, backtrack and try again.
+		for(int i = 0; i < rows && solved; i++) {
+			for(int k = 0; k < cols && solved; k++) {
+				if(gameBoard[i][k] == '_') {
+					solved = false;
+				} else if(Character.isDigit(gameBoard[i][k])) {
+					int num = Character.getNumericValue(gameBoard[i][k]);
+					int bulbCount = 0;
+					if(i+1 < rows && gameBoard[i+1][k] == 'b') {
+						bulbCount++;
+					}
+					if(k+1 < cols && gameBoard[i][k+1] == 'b') {
+						bulbCount++;
+					}
+					if(i-1 >= 0 && gameBoard[i-1][k] == 'b') {
+						bulbCount++;
+					}
+					if(k-1 >= 0 && gameBoard[i][k-1] == 'b') {
+						bulbCount++;
+					}
+					if(bulbCount != num) {
+						solved = false;
+					}
+				}
+			}
+		}
+		return solved;
+	}
+	public Boolean isFull() {
+		boolean solved = true;
+		for(int i = 0; i < rows && solved; i++) {
+			for(int k = 0; k < cols && solved; k++) {
+				if(gameBoard[i][k] == '_') {
+					solved = false;
+				}
+			}
+		}
+		return solved;
 	}
 }
