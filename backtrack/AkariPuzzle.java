@@ -55,6 +55,18 @@ public class AkariPuzzle {
 		System.out.println("=============================");
 	}
 
+	public String toString() {
+		String result = "\n";
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.cols; j++) {
+				result += this.gameBoard[i][j];
+			}
+			result += "\n";
+		}
+
+		return result;
+	}
+
 	public ArrayList<Coordinate> getCoordList() {
 		// Gets all available coordinates on the board in a shuffled array
 		// Used for "Random Node Selection" heuristic
