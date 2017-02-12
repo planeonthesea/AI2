@@ -12,7 +12,7 @@ public class Backtrack {
 	private static final int MAX_RECURSION_ATTEMPTS = 100000;
 
 	private static int HEURISTIC = RANDOM_NODE_HEURISTIC; // Default to random if user chooses none
-	private static int NUM_ATTEMPTS = 0;
+	private static int NUM_NODES_GENERATED = 0;
 
 	public static void main(String[] args) {
 		if (args.length >= 2) {
@@ -63,6 +63,7 @@ public class Backtrack {
 					if (puzz != null) {
 						System.out.println("Solving puzzle #" + currPuzz +" with '" + HEURITIC_NAMES[HEURISTIC] + "' heuristic...");
 						currPuzz+=1;
+						NUM_NODES_GENERATED = 0;
 						solve(puzz);
 					}
 					puzz = null;
@@ -136,6 +137,7 @@ public class Backtrack {
 			rootNode.addChildren(coordDeepCopy);
 
 			if (puzz.placeBulbIfPossible(rootNode.getData())) {
+				NUM_NODES_GENERATED+=1;
 				if (puzz.isFull() && puzz.isSolved()) {
 					solved = true;
 				} else {
@@ -146,6 +148,7 @@ public class Backtrack {
 
 		System.out.println("Final state:");
 		puzz.printBoard();
+		System.out.println("Number of nodes generated: " + NUM_NODES_GENERATED);
 	}
 
 	private static Boolean solveWithRandom(AkariPuzzle puzz, Node<Coordinate> rootNode) {
@@ -164,6 +167,7 @@ public class Backtrack {
 			currNode.setChildrenList(children);
 
 			if (puzz.placeBulbIfPossible(currNode.getData())) {
+				NUM_NODES_GENERATED+=1;
 				if (puzz.isFull() && puzz.isSolved()) {
 					solved = true;
 				} else {
@@ -175,65 +179,11 @@ public class Backtrack {
 		return solved;
 	}
 
-	private static AkariPuzzle recursiveRandom(ArrayList<Coordinate> openSpaces, AkariPuzzle puzz) {
-		if (NUM_ATTEMPTS > MAX_RECURSION_ATTEMPTS) {
-			return puzz;
-		}
-		NUM_ATTEMPTS += 1;
-
-		char[][] copyBoard; 
-		AkariPuzzle copyPuzzle;
-		AkariPuzzle solvedPuzzle = null;
-		ArrayList<Coordinate> openSpacesCopy = new ArrayList<Coordinate>();
-		Coordinate currCoord;
-		int pick = 0;
-		currCoord = null;
-		boolean keepGoing = true;
-		openSpacesCopy.clear();
-		for(Coordinate c : openSpaces) {
-			openSpacesCopy.add(new Coordinate(c.x, c.y));
-		}
-		while(pick < openSpacesCopy.size() && solvedPuzzle == null && keepGoing) {
-			if(!openSpaces.isEmpty()) {
-				copyBoard = puzz.deepCopyGameBoard();
-				copyPuzzle = new AkariPuzzle(puzz.getRows(), puzz.getCols());
-				copyPuzzle.setGameBoard(copyBoard);
-				currCoord = openSpacesCopy.remove(pick);
-				if (copyPuzzle.checkNeighbours(currCoord)) {
-					copyPuzzle.placeBulbIfPossible(currCoord);
-				}
-				if(copyPuzzle.isFull()) {
-					if(!copyPuzzle.isSolved()) {
-						keepGoing = false;
-					} else {
-						puzz = copyPuzzle;
-						solvedPuzzle = copyPuzzle;
-					}
-				} else {
-					solvedPuzzle = recursiveRandom(openSpacesCopy, copyPuzzle);
-					if(solvedPuzzle != null) {
-						// copyPuzzle.printBoard();
-					}
-					pick++;
-				}
-			} else {
-				keepGoing = false;
-			}
-		}
-		return solvedPuzzle;
-	}
-
-
 	private static void solveWithMostConstrained(AkariPuzzle puzz) {
 
 	}
 
 	private static void solveWithMostConstraining(AkariPuzzle puzz) {
 		
-	}
-
-	// TODO REMOVE
-	private static void print2dArray(char[][] array) {
-		System.out.println(Arrays.deepToString(array));
 	}
 }
