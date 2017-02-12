@@ -61,7 +61,6 @@ public class Backtrack {
 					// start of new puzzle / end of current puzzle
 					// process gameboard
 					if (puzz != null) {
-						System.out.println("Solving puzzle #" + currPuzz +" with '" + HEURITIC_NAMES[HEURISTIC] + "' heuristic...");
 						currPuzz+=1;
 						NUM_NODES_GENERATED = 0;
 						solve(puzz);
@@ -119,9 +118,6 @@ public class Backtrack {
 		Node<Coordinate> rootNode;
 		char[][] initBoardState = puzz.deepCopyGameBoard();
 
-		System.out.println("Initial State:");
-		puzz.printBoard();
-
 		ArrayList<Coordinate> coordDeepCopy = new ArrayList<Coordinate>();
 		for (Coordinate coord : shuffledCoords) {
 			coordDeepCopy.add(new Coordinate(coord.x, coord.y));
@@ -146,8 +142,8 @@ public class Backtrack {
 			} 
 		}
 
-		System.out.println("Final state:");
-		puzz.printBoard();
+		puzz.removeAsterisks();
+		System.out.println(puzz.toString());
 		System.out.println("Number of nodes generated: " + NUM_NODES_GENERATED);
 	}
 

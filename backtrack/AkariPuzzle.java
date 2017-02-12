@@ -61,7 +61,9 @@ public class AkariPuzzle {
 			for (int j = 0; j < this.cols; j++) {
 				result += this.gameBoard[i][j];
 			}
-			result += "\n";
+			if (i < this.rows - 1) {
+				result += "\n";
+			}
 		}
 
 		return result;
@@ -389,6 +391,7 @@ public class AkariPuzzle {
 		}
 		return solved;
 	}
+
 	public Boolean isFull() {
 		boolean solved = true;
 		for(int i = 0; i < rows && solved; i++) {
@@ -399,5 +402,18 @@ public class AkariPuzzle {
 			}
 		}
 		return solved;
+	}
+
+	public void removeAsterisks() {
+		// The output specification requires underscores; this is used solely
+		// for that reason.
+
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.cols; j++) {
+				if (this.gameBoard[i][j] == '*') {
+					this.gameBoard[i][j] = '_';
+				}
+			}
+		}
 	}
 }
