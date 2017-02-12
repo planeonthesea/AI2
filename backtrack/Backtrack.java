@@ -129,36 +129,36 @@ public class Backtrack {
 		// The top level -- Iterate across the shuffled coords as the root 
 		// of the Tree
 		while(!solved && shuffledCoords.size() > 0) {
+			puzz.setGameBoard(initBoardState);
+			initBoardState = puzz.deepCopyGameBoard();
 			rootCoord = shuffledCoords.remove(0);
 			rootNode = new Node<Coordinate>(rootCoord);
-			rootNode.addChildren(shuffledCoords);
+			rootNode.addChildren(coordDeepCopy);
 
 			if (puzz.placeBulbIfPossible(rootNode.getData())) {
 				if (puzz.isFull() && puzz.isSolved()) {
 					solved = true;
-				} else if (puzz.isFull() && !puzz.isSolved()) {
-					puzz.setGameBoard(initBoardState);
 				} else {
-					solved = solveWithRandom(puzz, shuffledCoords, rootNode);
+					solved = solveWithRandom(puzz, rootNode);
 				}
 			} 
 		}
 
+		System.out.println("Final state:");
 		puzz.printBoard();
 	}
 
-	private static Boolean solveWithRandom(AkariPuzzle puzz, 
-		ArrayList<Coordinate> shuffledCoords, Node<Coordinate> rootNode) {
+	private static Boolean solveWithRandom(AkariPuzzle puzz, Node<Coordinate> rootNode) {
 		Boolean solved = false;
 		Node<Coordinate> currNode;
 		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
 
-		char[][] initBoardState;
+		char[][] initBoardState = puzz.deepCopyGameBoard();
 
-		puzz.printBoard();
 		solved = puzz.isSolved();
 
 		while (!solved && children.size() > 0) {
+			puzz.setGameBoard(initBoardState);
 			initBoardState = puzz.deepCopyGameBoard();
 			currNode = children.remove(0);
 			currNode.setChildrenList(children);
@@ -166,10 +166,8 @@ public class Backtrack {
 			if (puzz.placeBulbIfPossible(currNode.getData())) {
 				if (puzz.isFull() && puzz.isSolved()) {
 					solved = true;
-				} else if (puzz.isFull() && !puzz.isSolved()) {
-					puzz.setGameBoard(initBoardState);
 				} else {
-					solved = solveWithRandom(puzz, shuffledCoords, currNode);
+					solved = solveWithRandom(puzz, currNode);
 				}
 			}
 		}
