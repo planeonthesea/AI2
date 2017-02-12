@@ -13,8 +13,19 @@ public class Node<T> {
 		return this.children;
 	}
 
-	public void setChildren(ArrayList<T> list) {
+	public void addChildren(ArrayList<T> list) {
 		// A deep copy of the list
+		for (int i = 0; i < list.size(); i++) {
+			this.children.add(new Node<T>(list.get(i)));
+		}
+	}
+
+	public void setChildrenList(ArrayList<Node<T>> list) {
+		// Deep copy
+		this.children = new ArrayList<Node<T>>();
+		for (Node<T> node : list) {
+			this.children.add(new Node<T>(node.getData()));
+		}
 	}
 
 	public T getData() {

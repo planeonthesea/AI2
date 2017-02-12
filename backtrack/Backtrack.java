@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 public class Backtrack {
 	private static final int RANDOM_NODE_HEURISTIC = 0;
@@ -113,40 +114,63 @@ public class Backtrack {
 	private static void solveWithRandom(AkariPuzzle puzz) {
 		ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
 		Boolean solved = false;
-		int index = 0;
 		Coordinate rootCoord;
 		Node<Coordinate> rootNode;
+		char[][] initBoardState = puzz.deepCopyGameBoard();
+
+		System.out.println("Initial State:");
+		puzz.printBoard();
+
+		ArrayList<Coordinate> coordDeepCopy = new ArrayList<Coordinate>();
+		for (Coordinate coord : shuffledCoords) {
+			coordDeepCopy.add(new Coordinate(coord.x, coord.y));
+		}
 
 		// The top level -- Iterate across the shuffled coords as the root 
 		// of the Tree
-		while(!solved && index < shuffledCoords.size()) {
-			// TODO may need to change .get() to .remove() if it causes problems
-			// For now, not removing simplifies processing
-			rootCoord = shuffledCoords.get(index);
+		while(!solved && shuffledCoords.size() > 0) {
+			rootCoord = shuffledCoords.remove(0);
 			rootNode = new Node<Coordinate>(rootCoord);
-			rootNode.setChildren(shuffledCoords);
+			rootNode.addChildren(shuffledCoords);
 
-			solved = solveWithRandom(puzz, shuffledCoords, rootNode);
-			index+=1;
+			if (puzz.placeBulbIfPossible(rootNode.getData())) {
+				if (puzz.isFull() && puzz.isSolved()) {
+					solved = true;
+				} else if (puzz.isFull() && !puzz.isSolved()) {
+					puzz.setGameBoard(initBoardState);
+				} else {
+					solved = solveWithRandom(puzz, shuffledCoords, rootNode);
+				}
+			} 
 		}
+
+		puzz.printBoard();
 	}
 
 	private static Boolean solveWithRandom(AkariPuzzle puzz, 
 		ArrayList<Coordinate> shuffledCoords, Node<Coordinate> rootNode) {
 		Boolean solved = false;
-		int index = 0;
 		Node<Coordinate> currNode;
 		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
 
-		// Try to place bulb; recurse on success; return on failure
-		if (puzz.placeBulbIfPossible(rootNode.getData())) {
-			if (puzz.isSolved()) {
-				return true;
-			}
+		char[][] initBoardState;
 
-			while (!solved && index < shuffledCoords.size()) {
-				currNode = children.get(index);
-				index+=1;
+		puzz.printBoard();
+		solved = puzz.isSolved();
+
+		while (!solved && children.size() > 0) {
+			initBoardState = puzz.deepCopyGameBoard();
+			currNode = children.remove(0);
+			currNode.setChildrenList(children);
+
+			if (puzz.placeBulbIfPossible(currNode.getData())) {
+				if (puzz.isFull() && puzz.isSolved()) {
+					solved = true;
+				} else if (puzz.isFull() && !puzz.isSolved()) {
+					puzz.setGameBoard(initBoardState);
+				} else {
+					solved = solveWithRandom(puzz, shuffledCoords, currNode);
+				}
 			}
 		}
 
@@ -208,5 +232,10 @@ public class Backtrack {
 
 	private static void solveWithMostConstraining(AkariPuzzle puzz) {
 		
+	}
+
+	// TODO REMOVE
+	private static void print2dArray(char[][] array) {
+		System.out.println(Arrays.deepToString(array));
 	}
 }
