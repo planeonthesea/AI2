@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Random;
+
 
 public class Backtrack {
 	private static final int RANDOM_NODE_HEURISTIC = 0;
@@ -103,19 +105,23 @@ public class Backtrack {
 				solveWithRandom(puzz);
 				break;
 			case MOST_CONTRAINED_HEURISTIC:
-				solveWithMostConstrained(puzz);
+				solveWithRandom(puzz);
+				//solveWithMostConstrained(puzz);
 				break;
 			case MOST_CONSTRAINING_HEURISTIC:
-				solveWithMostConstraining(puzz);
+				solveWithRandom(puzz);
+				//solveWithMostConstraining(puzz);
 				break;
 		}
 	}
 
 	private static void solveWithRandom(AkariPuzzle puzz) {
 		ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
+	    Random randomGenerator = new Random();
 		Boolean solved = false;
 		Coordinate rootCoord;
 		Node<Coordinate> rootNode;
+		int removeNodeNum;
 		char[][] initBoardState = puzz.deepCopyGameBoard();
 
 		ArrayList<Coordinate> coordDeepCopy = new ArrayList<Coordinate>();
@@ -128,7 +134,8 @@ public class Backtrack {
 		while(!solved && shuffledCoords.size() > 0) {
 			puzz.setGameBoard(initBoardState);
 			initBoardState = puzz.deepCopyGameBoard();
-			rootCoord = shuffledCoords.remove(0);
+			removeNodeNum = findNextNodeRoot(shuffledCoords, puzz);
+			rootCoord = shuffledCoords.remove(removeNodeNum);
 			rootNode = new Node<Coordinate>(rootCoord);
 			rootNode.addChildren(coordDeepCopy);
 
@@ -146,12 +153,272 @@ public class Backtrack {
 		System.out.println(puzz.toString());
 		System.out.println("Number of nodes generated: " + NUM_NODES_GENERATED);
 	}
-
+	private static int findNextNodeRoot(ArrayList<Coordinate> coords, AkariPuzzle puzz) {
+		Random randomGenerator = new Random();
+	    int nextNode = 0;
+	    boolean keepGoing;
+	    char[][] gameBoard = puzz.getGameBoard();
+	    Coordinate cell;
+	    int count;
+	    int emptySpaceCount;
+		switch (HEURISTIC) {
+		case RANDOM_NODE_HEURISTIC:
+			nextNode = randomGenerator.nextInt(coords.size());
+			break;
+		case MOST_CONSTRAINING_HEURISTIC:
+			nextNode = -1;
+			int currNode = 0 ;
+			int highestNum = -1;
+			for(Coordinate c : coords) {
+				emptySpaceCount = 0;
+				keepGoing = true;
+				cell = c;
+				count = cell.y;
+				while(keepGoing && cell.y - count > 0) {
+					if(gameBoard[cell.x][cell.y - count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.x;
+				while(keepGoing && cell.x - count > 0) {
+					if(gameBoard[cell.x - count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.x + count < puzz.getRows()-1) {
+					if(gameBoard[cell.x + count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.y + count < puzz.getCols()-1) {
+					if(gameBoard[cell.x][cell.y + count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				if(nextNode == -1) {
+					nextNode = currNode;
+					highestNum = emptySpaceCount;
+				} else if(emptySpaceCount > highestNum) {
+					nextNode = currNode;
+					highestNum = emptySpaceCount;
+				}
+				currNode++;
+			}
+			break;
+		case MOST_CONTRAINED_HEURISTIC:
+			nextNode = -1;
+			currNode = 0 ;
+			int lowestNum;
+			lowestNum = Integer.MAX_VALUE;
+			for(Coordinate c : coords) {
+				emptySpaceCount = 0;
+				keepGoing = true;
+				cell = c;
+				count = cell.y;
+				while(keepGoing && cell.y - count > 0) {
+					if(gameBoard[cell.x][cell.y - count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.x;
+				while(keepGoing && cell.x - count > 0) {
+					if(gameBoard[cell.x - count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.x + count < puzz.getRows()-1) {
+					if(gameBoard[cell.x + count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.y + count < puzz.getCols()-1) {
+					if(gameBoard[cell.x][cell.y + count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				if(nextNode == -1) {
+					nextNode = currNode;
+					lowestNum = emptySpaceCount;
+				} else if(emptySpaceCount > lowestNum) {
+					nextNode = currNode;
+					lowestNum = emptySpaceCount;
+				}
+				currNode++;
+			}
+			break;
+	}
+		return nextNode;
+	}
+	private static int findNextNode(ArrayList<Node<Coordinate>> coords, AkariPuzzle puzz) {
+	    Random randomGenerator = new Random();
+	    int nextNode = 0;
+	    boolean keepGoing;
+	    char[][] gameBoard = puzz.getGameBoard();
+	    Coordinate cell;
+	    int count;
+	    int emptySpaceCount;
+	    int currNode;
+		switch (HEURISTIC) {
+		case RANDOM_NODE_HEURISTIC:
+			nextNode = randomGenerator.nextInt(coords.size());
+			break;
+		case MOST_CONSTRAINING_HEURISTIC:
+			nextNode = -1;
+			currNode = 0 ;
+			int highestNum = -1;
+			for(Node<Coordinate> n : coords) {
+				emptySpaceCount = 0;
+				keepGoing = true;
+				cell = n.getData();
+				count = cell.y;
+				while(keepGoing && cell.y - count > 0) {
+					if(gameBoard[cell.x][cell.y - count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.x;
+				while(keepGoing && cell.x - count > 0) {
+					if(gameBoard[cell.x - count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.x + count < puzz.getRows()-1) {
+					if(gameBoard[cell.x + count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.y + count < puzz.getCols()-1) {
+					if(gameBoard[cell.x][cell.y + count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				if(nextNode == -1) {
+					nextNode = currNode;
+					highestNum = emptySpaceCount;
+				} else if(emptySpaceCount > highestNum) {
+					nextNode = currNode;
+					highestNum = emptySpaceCount;
+				}
+				currNode++;
+			}
+			break;
+		case MOST_CONTRAINED_HEURISTIC:
+			nextNode = -1;
+			currNode = 0 ;
+			int lowestNum;
+			lowestNum = Integer.MAX_VALUE;
+			for(Node<Coordinate> n : coords) {
+				emptySpaceCount = 0;
+				keepGoing = true;
+				cell = n.getData();
+				count = cell.y;
+				while(keepGoing && cell.y - count > 0) {
+					if(gameBoard[cell.x][cell.y - count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.x;
+				while(keepGoing && cell.x - count > 0) {
+					if(gameBoard[cell.x - count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
+						keepGoing = false;
+					}
+					count--;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.x + count < puzz.getRows()-1) {
+					if(gameBoard[cell.x + count][cell.y] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				keepGoing = true;
+				count = cell.y;
+				while(keepGoing && cell.y + count < puzz.getCols()-1) {
+					if(gameBoard[cell.x][cell.y + count] == '_') {
+						emptySpaceCount++;
+					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
+						keepGoing = false;
+					}
+					count++;
+				}
+				if(nextNode == -1) {
+					nextNode = currNode;
+					lowestNum = emptySpaceCount;
+				} else if(emptySpaceCount > lowestNum) {
+					nextNode = currNode;
+					lowestNum = emptySpaceCount;
+				}
+				currNode++;
+			}
+			break;
+	}
+		return nextNode;
+	}
 	private static Boolean solveWithRandom(AkariPuzzle puzz, Node<Coordinate> rootNode) {
 		Boolean solved = false;
 		Node<Coordinate> currNode;
 		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
-
+	    int nextNode;
 		char[][] initBoardState = puzz.deepCopyGameBoard();
 
 		solved = puzz.isSolved();
@@ -159,7 +426,8 @@ public class Backtrack {
 		while (!solved && children.size() > 0) {
 			puzz.setGameBoard(initBoardState);
 			initBoardState = puzz.deepCopyGameBoard();
-			currNode = children.remove(0);
+			nextNode = findNextNode(children, puzz);
+			currNode = children.remove(nextNode);
 			currNode.setChildrenList(children);
 
 			if (puzz.placeBulbIfPossible(currNode.getData())) {
@@ -176,7 +444,7 @@ public class Backtrack {
 	}
 
 	private static void solveWithMostConstrained(AkariPuzzle puzz) {
-
+		
 	}
 
 	private static void solveWithMostConstraining(AkariPuzzle puzz) {
