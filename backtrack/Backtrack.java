@@ -117,7 +117,7 @@ public class Backtrack {
 
 	private static void solveWithRandom(AkariPuzzle puzz) {
 		ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
-	    Random randomGenerator = new Random();
+		Random randomGenerator = new Random();
 		Boolean solved = false;
 		Coordinate rootCoord;
 		Node<Coordinate> rootNode;
@@ -155,12 +155,12 @@ public class Backtrack {
 	}
 	private static int findNextNodeRoot(ArrayList<Coordinate> coords, AkariPuzzle puzz) {
 		Random randomGenerator = new Random();
-	    int nextNode = 0;
-	    boolean keepGoing;
-	    char[][] gameBoard = puzz.getGameBoard();
-	    Coordinate cell;
-	    int count;
-	    int emptySpaceCount;
+		int nextNode = 0;
+		boolean keepGoing;
+		char[][] gameBoard = puzz.getGameBoard();
+		Coordinate cell;
+		int count;
+		int emptySpaceCount;
 		switch (HEURISTIC) {
 		case RANDOM_NODE_HEURISTIC:
 			nextNode = randomGenerator.nextInt(coords.size());
@@ -284,14 +284,14 @@ public class Backtrack {
 		return nextNode;
 	}
 	private static int findNextNode(ArrayList<Node<Coordinate>> coords, AkariPuzzle puzz) {
-	    Random randomGenerator = new Random();
-	    int nextNode = 0;
-	    boolean keepGoing;
-	    char[][] gameBoard = puzz.getGameBoard();
-	    Coordinate cell;
-	    int count;
-	    int emptySpaceCount;
-	    int currNode;
+		Random randomGenerator = new Random();
+		int nextNode = 0;
+		boolean keepGoing;
+		char[][] gameBoard = puzz.getGameBoard();
+		Coordinate cell;
+		int count;
+		int emptySpaceCount;
+		int currNode;
 		switch (HEURISTIC) {
 		case RANDOM_NODE_HEURISTIC:
 			nextNode = randomGenerator.nextInt(coords.size());
@@ -418,7 +418,7 @@ public class Backtrack {
 		Boolean solved = false;
 		Node<Coordinate> currNode;
 		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
-	    int nextNode;
+		int nextNode;
 		char[][] initBoardState = puzz.deepCopyGameBoard();
 
 		solved = puzz.isSolved();
