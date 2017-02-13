@@ -71,7 +71,7 @@ public class AkariPuzzle {
 	}
 
 	public ArrayList<Coordinate> getCoordList() {
-		if (this.availableCoords == null) {
+		if (this.availableCoords == null || this.availableCoords.size() == 0) {
 			for (int i = 0; i < this.rows; i++) {
 				for (int j = 0; j < this.cols; j++) {
 					if (this.gameBoard[i][j] == '_') {

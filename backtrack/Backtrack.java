@@ -134,6 +134,7 @@ public class Backtrack {
 		while(!solved && shuffledCoords.size() > 0) {
 			puzz.setGameBoard(initBoardState);
 			initBoardState = puzz.deepCopyGameBoard();
+			shuffledCoords = puzz.getShuffledCoordList(); // Get updated list (i.e., forward check)
 			removeNodeNum = findNextNodeRoot(shuffledCoords, puzz);
 			rootCoord = shuffledCoords.remove(removeNodeNum);
 			rootNode = new Node<Coordinate>(rootCoord);
