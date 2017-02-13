@@ -61,7 +61,9 @@ public class AkariPuzzle {
 			for (int j = 0; j < this.cols; j++) {
 				result += this.gameBoard[i][j];
 			}
-			result += "\n";
+			if (i < this.rows - 1) {
+				result += "\n";
+			}
 		}
 
 		return result;
@@ -202,19 +204,20 @@ public class AkariPuzzle {
 	}
 
 	public Boolean placeBulbIfPossible(Coordinate initCell) {
+		final char ch = '*';
 		Boolean fillSuccess = true;
 		char[][] gameBoardCopy = deepCopyGameBoard();
 
-		if (!fillColUp(initCell)) {
+		if (!fillColUp(initCell, ch)) {
 			fillSuccess = false;
 		}
-		if (!fillColDown(initCell)) {
+		if (!fillColDown(initCell, ch)) {
 			fillSuccess = false;
 		}
-		if (!fillRowLeft(initCell)) {
+		if (!fillRowLeft(initCell, ch)) {
 			fillSuccess = false;
 		}
-		if (!fillRowRight(initCell)) {
+		if (!fillRowRight(initCell, ch)) {
 			fillSuccess = false;
 		}
 
@@ -228,7 +231,7 @@ public class AkariPuzzle {
 		return fillSuccess;
 	}
 
-	private Boolean fillColUp(Coordinate initCell) {
+	private Boolean fillColUp(Coordinate initCell, char ch) {
 		// Fills cells with '*' to represent light in the upwards direction
 
 		// Returns true if no constraints violated
@@ -242,7 +245,7 @@ public class AkariPuzzle {
 		while (keepGoing) {
 			if (currCell.x >= 0) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
-					this.gameBoard[currCell.x][currCell.y] = '*';
+					this.gameBoard[currCell.x][currCell.y] = ch;
 					currCell = new Coordinate(currCell.x - OFFSET, currCell.y); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -257,7 +260,7 @@ public class AkariPuzzle {
 		return !constraintViolated;
 	}
 
-	private Boolean fillRowRight(Coordinate initCell) {
+	private Boolean fillRowRight(Coordinate initCell, char ch) {
 		// Fills cells with '*' to represent light in the upwards direction
 
 		// Returns true if no constraints violated
@@ -272,7 +275,7 @@ public class AkariPuzzle {
 
 			if (currCell.y < this.cols) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
-					this.gameBoard[currCell.x][currCell.y] = '*';
+					this.gameBoard[currCell.x][currCell.y] = ch;
 					currCell = new Coordinate(currCell.x, currCell.y + OFFSET); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -287,7 +290,7 @@ public class AkariPuzzle {
 		return !constraintViolated;
 	}
 
-	private Boolean fillRowLeft(Coordinate initCell) {
+	private Boolean fillRowLeft(Coordinate initCell, char ch) {
 		// Fills cells with '*' to represent light in the upwards direction
 
 		// Returns true if no constraints violated
@@ -301,7 +304,7 @@ public class AkariPuzzle {
 		while (keepGoing) {
 			if (currCell.y >= 0) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
-					this.gameBoard[currCell.x][currCell.y] = '*';
+					this.gameBoard[currCell.x][currCell.y] = ch;
 					currCell = new Coordinate(currCell.x, currCell.y - OFFSET); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -316,7 +319,7 @@ public class AkariPuzzle {
 		return !constraintViolated;
 	}
 
-	private Boolean fillColDown(Coordinate initCell) {
+	private Boolean fillColDown(Coordinate initCell, char ch) {
 		// Fills cells with '*' to represent light in the upwards direction
 
 		// Returns true if no constraints violated
@@ -330,7 +333,7 @@ public class AkariPuzzle {
 		while (keepGoing) {
 			if (currCell.x < this.cols) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
-					this.gameBoard[currCell.x][currCell.y] = '*';
+					this.gameBoard[currCell.x][currCell.y] = ch;
 					currCell = new Coordinate(currCell.x + OFFSET, currCell.y); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -388,6 +391,7 @@ public class AkariPuzzle {
 		}
 		return solved;
 	}
+
 	public Boolean isFull() {
 		boolean solved = true;
 		for(int i = 0; i < rows && solved; i++) {
@@ -398,5 +402,18 @@ public class AkariPuzzle {
 			}
 		}
 		return solved;
+	}
+
+	public void removeAsterisks() {
+		// The output specification requires underscores; this is used solely
+		// for that reason.
+
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.cols; j++) {
+				if (this.gameBoard[i][j] == '*') {
+					this.gameBoard[i][j] = '_';
+				}
+			}
+		}
 	}
 }
