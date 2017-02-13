@@ -442,12 +442,4 @@ public class Backtrack {
 
 		return solved;
 	}
-
-	private static void solveWithMostConstrained(AkariPuzzle puzz) {
-		
-	}
-
-	private static void solveWithMostConstraining(AkariPuzzle puzz) {
-		
-	}
 }
