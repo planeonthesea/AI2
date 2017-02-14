@@ -100,7 +100,6 @@ public class Backtrack {
 	}
 
 	private static void solve(AkariPuzzle puzz) {
-
 		switch (HEURISTIC) {
 			case RANDOM_NODE_HEURISTIC:
 				solveWithRandom(puzz);

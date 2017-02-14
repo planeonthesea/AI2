@@ -8,7 +8,6 @@ public class AkariPuzzle {
 	private int rows;
 	private int cols;
 	private char[][] gameBoard;
-	private ArrayList<Coordinate> placedBulbs = new ArrayList<Coordinate>();
 
 	public AkariPuzzle(int rows, int cols) {
 		this.rows = rows;
@@ -222,8 +221,8 @@ public class AkariPuzzle {
 		}
 
 		if (fillSuccess) {
+			
 			this.gameBoard[initCell.x][initCell.y] = 'b';
-			placedBulbs.add(initCell);
 		} else {
 			this.gameBoard = gameBoardCopy;
 		}
