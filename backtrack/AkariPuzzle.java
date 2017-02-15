@@ -8,13 +8,11 @@ public class AkariPuzzle {
 	private int rows;
 	private int cols;
 	private char[][] gameBoard;
-	private ArrayList<Coordinate> availableCoords;
 
 	public AkariPuzzle(int rows, int cols) {
 		this.rows = rows;
 		this.cols = cols;
 		this.gameBoard = new char[this.rows][this.cols];
-		this.availableCoords = new ArrayList<Coordinate>();
 	}
 
 	public void setRows(int rows) {
@@ -71,22 +69,23 @@ public class AkariPuzzle {
 	}
 
 	public ArrayList<Coordinate> getCoordList() {
-		if (this.availableCoords == null || this.availableCoords.size() == 0) {
-			for (int i = 0; i < this.rows; i++) {
-				for (int j = 0; j < this.cols; j++) {
-					if (this.gameBoard[i][j] == '_') {
-						this.availableCoords.add(new Coordinate(i, j));
-					}
+		// Gets all available coordinates on the board in a shuffled array
+		// Used for "Random Node Selection" heuristic
+		ArrayList<Coordinate> coords = new ArrayList<Coordinate>();
+
+		for (int i = 0; i < this.rows; i++) {
+			for (int j = 0; j < this.cols; j++) {
+				// Populate ArrayList with empty cells (i.e., cells with no wall)
+				if (!Character.isDigit(gameBoard[i][j])) {
+					coords.add(new Coordinate(i, j));
 				}
 			}
 		}
 
-		return this.availableCoords;
+		return coords;
 	}
 
 	public ArrayList<Coordinate> getShuffledCoordList() {
-		// Gets all available coordinates on the board in a shuffled array
-		// Used for "Random Node Selection" heuristic
 		ArrayList<Coordinate> coords = getCoordList();
 		long seed = System.nanoTime();
 		Collections.shuffle(coords, new Random(seed));
@@ -224,7 +223,6 @@ public class AkariPuzzle {
 		if (fillSuccess) {
 			
 			this.gameBoard[initCell.x][initCell.y] = 'b';
-			this.availableCoords.remove(initCell);
 		} else {
 			this.gameBoard = gameBoardCopy;
 		}
@@ -247,7 +245,6 @@ public class AkariPuzzle {
 			if (currCell.x >= 0) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = ch;
-					this.availableCoords.remove(currCell);
 					currCell = new Coordinate(currCell.x - OFFSET, currCell.y); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -278,7 +275,6 @@ public class AkariPuzzle {
 			if (currCell.y < this.cols) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = ch;
-					this.availableCoords.remove(currCell);
 					currCell = new Coordinate(currCell.x, currCell.y + OFFSET); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -308,7 +304,6 @@ public class AkariPuzzle {
 			if (currCell.y >= 0) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = ch;
-					this.availableCoords.remove(currCell);
 					currCell = new Coordinate(currCell.x, currCell.y - OFFSET); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;
@@ -338,7 +333,6 @@ public class AkariPuzzle {
 			if (currCell.x < this.cols) {
 				if (this.gameBoard[currCell.x][currCell.y] == '_' || this.gameBoard[currCell.x][currCell.y] == '*') {
 					this.gameBoard[currCell.x][currCell.y] = ch;
-					this.availableCoords.remove(currCell);
 					currCell = new Coordinate(currCell.x + OFFSET, currCell.y); // Move curr Cell up by one
 				} else if (Character.isDigit(this.gameBoard[currCell.x][currCell.y])) {
 					keepGoing = false;

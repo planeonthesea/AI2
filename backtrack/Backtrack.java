@@ -117,7 +117,6 @@ public class Backtrack {
 
 	private static void solveWithRandom(AkariPuzzle puzz) {
 		ArrayList<Coordinate> shuffledCoords = puzz.getShuffledCoordList();
-		Random randomGenerator = new Random();
 		Boolean solved = false;
 		Coordinate rootCoord;
 		Node<Coordinate> rootNode;
@@ -134,7 +133,6 @@ public class Backtrack {
 		while(!solved && shuffledCoords.size() > 0) {
 			puzz.setGameBoard(initBoardState);
 			initBoardState = puzz.deepCopyGameBoard();
-			shuffledCoords = puzz.getShuffledCoordList(); // Get updated list (i.e., forward check)
 			removeNodeNum = findNextNodeRoot(shuffledCoords, puzz);
 			rootCoord = shuffledCoords.remove(removeNodeNum);
 			rootNode = new Node<Coordinate>(rootCoord);
@@ -158,7 +156,7 @@ public class Backtrack {
 		Boolean solved = false;
 		Node<Coordinate> currNode;
 		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
-		int nextNode;
+	    int nextNode;
 		char[][] initBoardState = puzz.deepCopyGameBoard();
 		boolean fullBoard = false;
 		solved = puzz.isSolved();
@@ -188,13 +186,13 @@ public class Backtrack {
 	}
 	private static int findNextNodeRoot(ArrayList<Coordinate> coords, AkariPuzzle puzz) {
 		Random randomGenerator = new Random();
-		int nextNode = 0;
-		boolean keepGoing;
-		char[][] gameBoard = puzz.getGameBoard();
-		Coordinate cell;
-		boolean foundSquare;
-		int count;
-		int emptySpaceCount;
+	    int nextNode = 0;
+	    boolean keepGoing;
+	    char[][] gameBoard = puzz.getGameBoard();
+	    Coordinate cell;
+	    boolean foundSquare;
+	    int count;
+	    int emptySpaceCount;
 		switch (HEURISTIC) {
 		case RANDOM_NODE_HEURISTIC:
 			nextNode = randomGenerator.nextInt(coords.size());
@@ -383,16 +381,15 @@ public class Backtrack {
 			
 	}
 	private static int findNextNode(ArrayList<Node<Coordinate>> coords, AkariPuzzle puzz) {
-		Random randomGenerator = new Random();
-		int nextNode = 0;
-		boolean keepGoing;
-		char[][] gameBoard = puzz.getGameBoard();
-		Coordinate cell;
-		int count;
-		int emptySpaceCount;
-		boolean foundSquare;
-		int currNode;
-
+	    Random randomGenerator = new Random();
+	    int nextNode = 0;
+	    boolean keepGoing;
+	    char[][] gameBoard = puzz.getGameBoard();
+	    Coordinate cell;
+	    int count;
+	    int emptySpaceCount;
+	    boolean foundSquare;
+	    int currNode;
 		switch (HEURISTIC) {
 		case RANDOM_NODE_HEURISTIC:
 			nextNode = randomGenerator.nextInt(coords.size());
