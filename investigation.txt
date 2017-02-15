@@ -9,6 +9,9 @@ constraining will use the most nodes, and random will likely use some number bet
 When running the program with a 12x12 with various numbers or walls it was found that grids with 
 more walls were completed faster because each wall added more constraints to the puzzle 
 resulting earlier backtracking.  
+Though forward checking often produced fewer nodes, the side-effect was much higher memory usage.
+On occasion, both members would experience heap overflows from the JVM. This was aided by some
+optimizations, but never fully resolved.
 
 rows: 6 cols: 6
 walls 17
