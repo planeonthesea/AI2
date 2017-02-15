@@ -222,6 +222,7 @@ public class AkariPuzzle {
 		}
 
 		if (fillSuccess) {
+			
 			this.gameBoard[initCell.x][initCell.y] = 'b';
 			this.availableCoords.remove(initCell);
 		} else {

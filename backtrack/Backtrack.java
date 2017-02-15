@@ -84,6 +84,7 @@ public class Backtrack {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Done");
 	}
 
 	private static void addPuzzleRow(AkariPuzzle puzz, String line, int row) {
@@ -99,7 +100,6 @@ public class Backtrack {
 	}
 
 	private static void solve(AkariPuzzle puzz) {
-
 		switch (HEURISTIC) {
 			case RANDOM_NODE_HEURISTIC:
 				solveWithRandom(puzz);
@@ -154,12 +154,45 @@ public class Backtrack {
 		System.out.println(puzz.toString());
 		System.out.println("Number of nodes generated: " + NUM_NODES_GENERATED);
 	}
+	private static Boolean solveWithRandom(AkariPuzzle puzz, Node<Coordinate> rootNode) {
+		Boolean solved = false;
+		Node<Coordinate> currNode;
+		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
+		int nextNode;
+		char[][] initBoardState = puzz.deepCopyGameBoard();
+		boolean fullBoard = false;
+		solved = puzz.isSolved();
+
+		while (!solved && children.size() > 0 && !fullBoard) {
+			puzz.setGameBoard(initBoardState);
+			initBoardState = puzz.deepCopyGameBoard();
+			nextNode = findNextNode(children, puzz);
+			if(nextNode != -1) {
+				currNode = children.remove(nextNode);
+				currNode.setChildrenList(children);
+	
+				if (puzz.placeBulbIfPossible(currNode.getData())) {
+					NUM_NODES_GENERATED+=1;
+					if (puzz.isFull() && puzz.isSolved()) {
+						solved = true;
+					} else {
+						solved = solveWithRandom(puzz, currNode);
+					}
+				}
+			} else {
+				fullBoard = true;
+			}
+		}
+
+		return solved;
+	}
 	private static int findNextNodeRoot(ArrayList<Coordinate> coords, AkariPuzzle puzz) {
 		Random randomGenerator = new Random();
 		int nextNode = 0;
 		boolean keepGoing;
 		char[][] gameBoard = puzz.getGameBoard();
 		Coordinate cell;
+		boolean foundSquare;
 		int count;
 		int emptySpaceCount;
 		switch (HEURISTIC) {
@@ -168,57 +201,65 @@ public class Backtrack {
 			break;
 		case MOST_CONSTRAINING_HEURISTIC:
 			nextNode = -1;
-			int currNode = 0 ;
+			int currNode = 0;
+			foundSquare = false;
 			int highestNum = -1;
-			for(Coordinate c : coords) {
+			for(int coordCount = 0; coordCount < coords.size() && !foundSquare; coordCount++) {
 				emptySpaceCount = 0;
 				keepGoing = true;
-				cell = c;
+				cell = coords.get(coordCount);
 				count = cell.y;
-				while(keepGoing && cell.y - count > 0) {
-					if(gameBoard[cell.x][cell.y - count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
-						keepGoing = false;
+				if(gameBoard[cell.x][cell.y] != 'b') {
+					if(checkblocks(cell, puzz, gameBoard)) {
+						foundSquare = true;
+						nextNode = currNode;
+					} else if(!checkForZero(cell, puzz, gameBoard)) {
+						while(keepGoing && count > 0) {
+							if(gameBoard[cell.x][cell.y - count] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x][cell.y - count]) || gameBoard[cell.x][cell.y - count] == 'b') {
+								keepGoing = false;
+							}
+							count--;
+						}
+						keepGoing = true;
+						count = cell.x;
+						while(keepGoing && count > 0) {
+							if(gameBoard[cell.x - count][cell.y] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x - count][cell.y]) || gameBoard[cell.x - count][cell.y] == 'b') {
+								keepGoing = false;
+							}
+							count--;
+						}
+						keepGoing = true;
+						count = cell.y;
+						while(keepGoing && cell.x + count < puzz.getRows()-1) {
+							if(gameBoard[cell.x + count][cell.y] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x + count][cell.y]) || gameBoard[cell.x + count][cell.y] == 'b') {
+								keepGoing = false;
+							}
+							count++;
+						}
+						keepGoing = true;
+						count = cell.y;
+						while(keepGoing && cell.y + count < puzz.getCols()-1) {
+							if(gameBoard[cell.x][cell.y + count] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x][cell.y + count]) || gameBoard[cell.x][cell.y + count] == 'b') {
+								keepGoing = false;
+							}
+							count++;
+						}
+						if(nextNode == -1) {
+							nextNode = currNode;
+							highestNum = emptySpaceCount;
+						} else if(emptySpaceCount > highestNum) {
+							nextNode = currNode;
+							highestNum = emptySpaceCount;
+						}
 					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.x;
-				while(keepGoing && cell.x - count > 0) {
-					if(gameBoard[cell.x - count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
-						keepGoing = false;
-					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.x + count < puzz.getRows()-1) {
-					if(gameBoard[cell.x + count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
-						keepGoing = false;
-					}
-					count++;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.y + count < puzz.getCols()-1) {
-					if(gameBoard[cell.x][cell.y + count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
-						keepGoing = false;
-					}
-					count++;
-				}
-				if(nextNode == -1) {
-					nextNode = currNode;
-					highestNum = emptySpaceCount;
-				} else if(emptySpaceCount > highestNum) {
-					nextNode = currNode;
-					highestNum = emptySpaceCount;
 				}
 				currNode++;
 			}
@@ -227,62 +268,119 @@ public class Backtrack {
 			nextNode = -1;
 			currNode = 0 ;
 			int lowestNum;
+			foundSquare = false;
 			lowestNum = Integer.MAX_VALUE;
-			for(Coordinate c : coords) {
+			for(int coordCount = 0; coordCount < coords.size() && !foundSquare; coordCount++) {
 				emptySpaceCount = 0;
 				keepGoing = true;
-				cell = c;
+				cell = coords.get(coordCount);
 				count = cell.y;
-				while(keepGoing && cell.y - count > 0) {
-					if(gameBoard[cell.x][cell.y - count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
-						keepGoing = false;
+				if(gameBoard[cell.x][cell.y] != 'b') {
+					if(checkblocks(cell, puzz, gameBoard)) {
+						foundSquare = true;
+						nextNode = currNode;
+					} else if(!checkForZero(cell, puzz, gameBoard)) {
+						while(keepGoing && count > 0) {
+							if(gameBoard[cell.x][cell.y - count] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x][cell.y - count]) || gameBoard[cell.x][cell.y - count] == 'b') {
+								keepGoing = false;
+							}
+							count--;
+						}
+						keepGoing = true;
+						count = cell.x;
+						while(keepGoing && count > 0) {
+							if(gameBoard[cell.x - count][cell.y] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x - count][cell.y]) || gameBoard[cell.x - count][cell.y] == 'b') {
+								keepGoing = false;
+							}
+							count--;
+						}
+						keepGoing = true;
+						count = cell.y;
+						while(keepGoing && cell.x + count < puzz.getRows()-1) {
+							if(gameBoard[cell.x + count][cell.y] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x + count][cell.y]) || gameBoard[cell.x + count][cell.y] == 'b') {
+								keepGoing = false;
+							}
+							count++;
+						}
+						keepGoing = true;
+						count = cell.y;
+						while(keepGoing && cell.y + count < puzz.getCols()-1) {
+							if(gameBoard[cell.x][cell.y + count] == '_') {
+								emptySpaceCount++;
+							} else if(Character.isDigit(gameBoard[cell.x][cell.y + count]) || gameBoard[cell.x][cell.y + count] == 'b') {
+								keepGoing = false;
+							}
+							count++;
+						}
+						if(nextNode == -1) {
+							nextNode = currNode;
+							lowestNum = emptySpaceCount;
+						} else if(emptySpaceCount < lowestNum) {
+							nextNode = currNode;
+							lowestNum = emptySpaceCount;
+						}
 					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.x;
-				while(keepGoing && cell.x - count > 0) {
-					if(gameBoard[cell.x - count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
-						keepGoing = false;
-					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.x + count < puzz.getRows()-1) {
-					if(gameBoard[cell.x + count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
-						keepGoing = false;
-					}
-					count++;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.y + count < puzz.getCols()-1) {
-					if(gameBoard[cell.x][cell.y + count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
-						keepGoing = false;
-					}
-					count++;
-				}
-				if(nextNode == -1) {
-					nextNode = currNode;
-					lowestNum = emptySpaceCount;
-				} else if(emptySpaceCount > lowestNum) {
-					nextNode = currNode;
-					lowestNum = emptySpaceCount;
 				}
 				currNode++;
 			}
 			break;
 	}
 		return nextNode;
+	}
+	private static boolean checkForZero(Coordinate cell, AkariPuzzle puzz, char[][] gameBoard) {
+		boolean boardersZero = false;
+		if(cell.x + 1 < puzz.getRows() && Character.isDigit(gameBoard[cell.x+1][cell.y]) && !boardersZero) {
+			boardersZero = Character.getNumericValue(gameBoard[cell.x+1][cell.y]) == 0;
+		}
+		if(cell.y + 1 < puzz.getCols() && Character.isDigit(gameBoard[cell.x][cell.y+1]) && !boardersZero) {
+			boardersZero = Character.getNumericValue(gameBoard[cell.x][cell.y+1]) == 0;
+		}
+		if(cell.x - 1 > 0 && Character.isDigit(gameBoard[cell.x-1][cell.y]) && !boardersZero) {
+			boardersZero = Character.getNumericValue(gameBoard[cell.x-1][cell.y]) == 0;
+		}
+		if(cell.y - 1 > 0 && Character.isDigit(gameBoard[cell.x][cell.y-1]) && !boardersZero) {
+			boardersZero = Character.getNumericValue(gameBoard[cell.x][cell.y-1]) == 0;
+		}
+		return boardersZero;
+	}
+	private static boolean checkblocks(Coordinate cell, AkariPuzzle puzz, char[][] gameBoard) {
+		boolean mustPlaceBulb = false;
+		if(cell.x + 1 < puzz.getRows() && Character.isDigit(gameBoard[cell.x+1][cell.y]) && !mustPlaceBulb) {
+			mustPlaceBulb = checkSurroundingBlocks(new Coordinate(cell.x + 1, cell.y), puzz, gameBoard);
+		}
+		if(cell.y + 1 < puzz.getCols() && Character.isDigit(gameBoard[cell.x][cell.y+1]) && !mustPlaceBulb) {
+			mustPlaceBulb = checkSurroundingBlocks(new Coordinate(cell.x, cell.y + 1), puzz, gameBoard);
+		}
+		if(cell.x - 1 > 0 && Character.isDigit(gameBoard[cell.x-1][cell.y]) && !mustPlaceBulb) {
+			mustPlaceBulb = checkSurroundingBlocks(new Coordinate(cell.x - 1, cell.y), puzz, gameBoard);
+		}
+		if(cell.y - 1 > 0 && Character.isDigit(gameBoard[cell.x][cell.y-1]) && !mustPlaceBulb) {
+			mustPlaceBulb = checkSurroundingBlocks(new Coordinate(cell.x, cell.y - 1), puzz, gameBoard);				
+		}
+		return mustPlaceBulb;
+	}
+	private static boolean checkSurroundingBlocks(Coordinate cell, AkariPuzzle puzz, char[][] gameBoard) {
+		int count = 0;
+		if(cell.x + 1 < puzz.getRows() && gameBoard[cell.x+1][cell.y] == '_') {
+			count++;
+		}
+		if(cell.y + 1 < puzz.getCols() && gameBoard[cell.x][cell.y+1] == '_') {
+			count++;
+		}
+		if(cell.x - 1 > 0 && gameBoard[cell.x-1][cell.y] == '_') {
+			count++;
+		}
+		if(cell.y - 1 > 0 && gameBoard[cell.x][cell.y-1] == '_') {
+			count++;
+		}
+		return count == Character.getNumericValue(gameBoard[cell.x][cell.y]);
+			
 	}
 	private static int findNextNode(ArrayList<Node<Coordinate>> coords, AkariPuzzle puzz) {
 		Random randomGenerator = new Random();
@@ -292,64 +390,74 @@ public class Backtrack {
 		Coordinate cell;
 		int count;
 		int emptySpaceCount;
+		boolean foundSquare;
 		int currNode;
+
 		switch (HEURISTIC) {
 		case RANDOM_NODE_HEURISTIC:
 			nextNode = randomGenerator.nextInt(coords.size());
 			break;
 		case MOST_CONSTRAINING_HEURISTIC:
 			nextNode = -1;
-			currNode = 0 ;
+			currNode = 0 ;			
+			foundSquare = false;
 			int highestNum = -1;
-			for(Node<Coordinate> n : coords) {
+			for(int coordCount = 0; coordCount < coords.size() && !foundSquare; coordCount++) {
 				emptySpaceCount = 0;
 				keepGoing = true;
-				cell = n.getData();
+				cell = coords.get(coordCount).getData();
 				count = cell.y;
-				while(keepGoing && cell.y - count > 0) {
-					if(gameBoard[cell.x][cell.y - count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
-						keepGoing = false;
+				if(gameBoard[cell.x][cell.y] != 'b') {
+					if(checkblocks(cell, puzz, gameBoard)) {
+						foundSquare = true;
+						nextNode = currNode;
+					} else if(!checkForZero(cell, puzz, gameBoard)) {
+					while(keepGoing && count > 0) {
+						if(gameBoard[cell.x][cell.y - count] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x][cell.y - count]) || gameBoard[cell.x][cell.y - count] == 'b') {
+							keepGoing = false;
+						}
+						count--;
 					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.x;
-				while(keepGoing && cell.x - count > 0) {
-					if(gameBoard[cell.x - count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
-						keepGoing = false;
+					keepGoing = true;
+					count = cell.x;
+					while(keepGoing && count > 0) {
+						if(gameBoard[cell.x - count][cell.y] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x - count][cell.y]) || gameBoard[cell.x - count][cell.y] == 'b') {
+							keepGoing = false;
+						}
+						count--;
 					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.x + count < puzz.getRows()-1) {
-					if(gameBoard[cell.x + count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
-						keepGoing = false;
+					keepGoing = true;
+					count = cell.y;
+					while(keepGoing && cell.x + count < puzz.getRows()-1) {
+						if(gameBoard[cell.x + count][cell.y] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x + count][cell.y]) || gameBoard[cell.x + count][cell.y] == 'b') {
+							keepGoing = false;
+						}
+						count++;
 					}
-					count++;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.y + count < puzz.getCols()-1) {
-					if(gameBoard[cell.x][cell.y + count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
-						keepGoing = false;
+					keepGoing = true;
+					count = cell.y;
+					while(keepGoing && cell.y + count < puzz.getCols()-1) {
+						if(gameBoard[cell.x][cell.y + count] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x][cell.y + count]) || gameBoard[cell.x][cell.y + count] == 'b') {
+							keepGoing = false;
+						}
+						count++;
 					}
-					count++;
+					if(nextNode == -1) {
+						nextNode = currNode;
+						highestNum = emptySpaceCount;
+					} else if(emptySpaceCount > highestNum) {
+						nextNode = currNode;
+						highestNum = emptySpaceCount;
+					}
 				}
-				if(nextNode == -1) {
-					nextNode = currNode;
-					highestNum = emptySpaceCount;
-				} else if(emptySpaceCount > highestNum) {
-					nextNode = currNode;
-					highestNum = emptySpaceCount;
 				}
 				currNode++;
 			}
@@ -358,89 +466,69 @@ public class Backtrack {
 			nextNode = -1;
 			currNode = 0 ;
 			int lowestNum;
+			foundSquare = false;
 			lowestNum = Integer.MAX_VALUE;
-			for(Node<Coordinate> n : coords) {
+			for(int coordCount = 0; coordCount < coords.size() && !foundSquare; coordCount++) {
 				emptySpaceCount = 0;
 				keepGoing = true;
-				cell = n.getData();
+				cell = coords.get(coordCount).getData();
 				count = cell.y;
-				while(keepGoing && cell.y - count > 0) {
-					if(gameBoard[cell.x][cell.y - count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y - count])) {
-						keepGoing = false;
+				if(gameBoard[cell.x][cell.y] != 'b') {
+					if(checkblocks(cell, puzz, gameBoard)) {
+						foundSquare = true;
+						nextNode = currNode;
+					} else if(!checkForZero(cell, puzz, gameBoard)) {
+					while(keepGoing && count > 0) {
+						if(gameBoard[cell.x][cell.y - count] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x][cell.y - count]) || gameBoard[cell.x][cell.y - count] == 'b') {
+							keepGoing = false;
+						}
+						count--;
 					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.x;
-				while(keepGoing && cell.x - count > 0) {
-					if(gameBoard[cell.x - count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x - count][cell.y])) {
-						keepGoing = false;
+					keepGoing = true;
+					count = cell.x;
+					while(keepGoing && count > 0) {
+						if(gameBoard[cell.x - count][cell.y] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x - count][cell.y]) || gameBoard[cell.x - count][cell.y] == 'b') {
+							keepGoing = false;
+						}
+						count--;
 					}
-					count--;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.x + count < puzz.getRows()-1) {
-					if(gameBoard[cell.x + count][cell.y] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x + count][cell.y])) {
-						keepGoing = false;
+					keepGoing = true;
+					count = cell.y;
+					while(keepGoing && cell.x + count < puzz.getRows()-1) {
+						if(gameBoard[cell.x + count][cell.y] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x + count][cell.y]) || gameBoard[cell.x + count][cell.y] == 'b') {
+							keepGoing = false;
+						}
+						count++;
 					}
-					count++;
-				}
-				keepGoing = true;
-				count = cell.y;
-				while(keepGoing && cell.y + count < puzz.getCols()-1) {
-					if(gameBoard[cell.x][cell.y + count] == '_') {
-						emptySpaceCount++;
-					} else if(Character.isDigit(gameBoard[cell.x][cell.y + count])) {
-						keepGoing = false;
+					keepGoing = true;
+					count = cell.y;
+					while(keepGoing && cell.y + count < puzz.getCols()-1) {
+						if(gameBoard[cell.x][cell.y + count] == '_') {
+							emptySpaceCount++;
+						} else if(Character.isDigit(gameBoard[cell.x][cell.y + count]) || gameBoard[cell.x][cell.y + count] == 'b') {
+							keepGoing = false;
+						}
+						count++;
 					}
-					count++;
+					if(nextNode == -1) {
+						nextNode = currNode;
+						lowestNum = emptySpaceCount;
+					} else if(emptySpaceCount < lowestNum) {
+						nextNode = currNode;
+						lowestNum = emptySpaceCount;
+					}
 				}
-				if(nextNode == -1) {
-					nextNode = currNode;
-					lowestNum = emptySpaceCount;
-				} else if(emptySpaceCount > lowestNum) {
-					nextNode = currNode;
-					lowestNum = emptySpaceCount;
 				}
 				currNode++;
 			}
 			break;
 	}
 		return nextNode;
-	}
-	private static Boolean solveWithRandom(AkariPuzzle puzz, Node<Coordinate> rootNode) {
-		Boolean solved = false;
-		Node<Coordinate> currNode;
-		ArrayList<Node<Coordinate>> children = rootNode.getChildren();
-		int nextNode;
-		char[][] initBoardState = puzz.deepCopyGameBoard();
-
-		solved = puzz.isSolved();
-
-		while (!solved && children.size() > 0) {
-			puzz.setGameBoard(initBoardState);
-			initBoardState = puzz.deepCopyGameBoard();
-			nextNode = findNextNode(children, puzz);
-			currNode = children.remove(nextNode);
-			currNode.setChildrenList(children);
-
-			if (puzz.placeBulbIfPossible(currNode.getData())) {
-				NUM_NODES_GENERATED+=1;
-				if (puzz.isFull() && puzz.isSolved()) {
-					solved = true;
-				} else {
-					solved = solveWithRandom(puzz, currNode);
-				}
-			}
-		}
-
-		return solved;
 	}
 }
