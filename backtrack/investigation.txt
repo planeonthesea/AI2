@@ -1,0 +1,66 @@
+Average Nodes created for different sized puzzles after 4 runs.  Constrained is the quickes in all cases because it seeks to fill in the highest number of spaces with each run and therefore will reach an end sooner.  Conversly the constraining hueristic will visit the most nodes because it will choose the bulb that will light up the smallest amount of squares on the board.  Random will vary because the next space is chosen at random.  In the first puzzle random requires the highest number of nodes, but it's clear that in most cases constrained will use the least nodes, constraining will use the most nodes, and random will likely use some number between the two.  
+
+rows: 6 cols: 6
+walls 17
+Random****         avg: 228
+Constrained****    avg: 175
+Constraining****   avg: 193
+=============================
+1_11_2
+1_0___
+__2___
+2__3_0
+_13_10
+1___00
+=============================
+rows: 8 cols: 8
+walls 30
+Random****         avg: 27964
+Constrained****    avg: 21518
+Constraining****   avg: 31136
+=============================
+__1_0_1_
+21__1_12
+_13__2__
+11_22__1
+0_12_4_1
+__2_4_2_
+__03_2__
+1____00_
+=============================
+rows: 10 cols: 10
+walls 37
+Random****         avg: 39467
+Constrained****    avg: 29447
+Constraining****   avg: 49930
+=============================
+0_________
+_1_2_11_21
+_120_1____
+2__1____3_
+_____1____
+1_0__0_011
+____0__11_
+_22_11101_
+12_3__1___
+1_3_______
+=============================
+rows: 12 cols: 12
+walls 47
+Random****         avg: 1854133
+Constrained****    avg: 1593029
+Constraining****   avg: 1269464
+=============================
+2_1_1_11____
+_____1_03_10
+1_0__2___301
+________2_3_
+_21_1___1___
+3_____1__2_0
+____001_3___
+_0___10___2_
+11_1___1____
+_2_1_2______
+_____2___0_0
+0_0____1____
+=============================
