@@ -11,4 +11,4 @@ _Note: Java 8 Required_
 - To compile:
 	+ `cd` into `forward_checking/` and run `javac *.java`
 - To run:
-	+ `java ForwardCheck <path/to/input/file> --<random/most-constrained/most-constraining>`
+	+ `java FwdCheck <path/to/input/file> --<random/most-constrained/most-constraining>`
